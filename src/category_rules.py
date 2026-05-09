@@ -17,23 +17,19 @@ CATEGORY_RULES = {
 
     "reklam": {
         "keywords": [
-            "reklam", "reklamlar", "reklamı", "reklamları",
-            "çok reklam", "reklam çıkıyor", "reklam yok",
-            "reklamsız", "reklam olmayışı", "reklam tuzağı",
-            "uzun reklam", "reklam süresi", "her oyuna reklam",
-            "her bölümde reklam", "ads", "ad not ready",
-            "tanıtım", "video reklam"
+            "reklam", "reklamlar", "reklam çıkıyor", "çok reklam",
+            "reklam tuzağı", "uzun reklam", "reklam süresi",
+            "her bölümde reklam", "ads", "ad not ready", "video reklam"
         ],
         "regex": [
             r"her\s+(oyun|bölüm|level|seviye).*reklam",
             r"(oyundan|oyun).*çok.*reklam",
             r"sürekli.*reklam",
-            r"reklam.*(çok|fazla|uzun|bitmiyor)",
-            r"(reklam|video).*çıkıyor",
-            r"(reklamsız|reklam yok)"
+            r"reklam.*(çok|fazla|uzun|bitmiyor|çıkıyor)",
+            r"(video|tanıtım).*reklam"
         ],
         "fuzzy": [
-            "reklam", "reklem", "reklm", "reklamm", "tanitim", "tanıtım"
+            "reklam", "reklem", "reklm", "reklamm"
         ]
     },
 
@@ -41,16 +37,12 @@ CATEGORY_RULES = {
         "keywords": [
             "reklamla oyunun alakası yok", "reklamla alakası yok",
             "reklamdaki gibi değil", "reklamdakiyle alakası yok",
-            "reklamdaki oyun yok", "reklamdaki bölümler yok",
-            "reklam başka oyun başka", "reklam farklı oyun farklı",
-            "reklamlarda gösterilen oyun", "tanıtımdaki gibi değil",
+            "reklamdaki oyun yok", "reklam başka oyun başka",
+            "reklam farklı oyun farklı", "tanıtımdaki gibi değil",
             "tanıtıldığı gibi değil", "görseldeki oyun yok",
             "görselle alakası yok", "fotoğraflardaki gibi değil",
             "videodaki gibi değil", "kandırmaca", "aldatıcı",
-            "dolandırıcılık", "hayal kırıklığı", "alakası yok",
-            "gösterilen oyun", "istediğim gibi değildi",
-            "oyun içeriği böyle değildi", "tanıtıldığı gibi bir oyun değil",
-            "görseldeki oyunlar çıkmadı", "oyun reklam"
+            "dolandırıcılık", "hayal kırıklığı", "gösterilen oyun"
         ],
         "regex": [
             r"reklam.*(alakası yok|farklı|başka|gibi değil)",
@@ -61,67 +53,63 @@ CATEGORY_RULES = {
             r"(kandırmaca|aldatıcı|dolandırıcılık)"
         ],
         "fuzzy": [
-            "aldatıcı", "kandırmaca", "dolandırıcılık", "tanıtım"
+            "aldatıcı", "kandırmaca", "dolandırıcılık"
         ]
     },
 
     "guncelleme_sorunu": {
         "keywords": [
-            "güncelleme", "güncelleyemiyorum", "güncellenmiyor",
+            "güncelleyemiyorum", "güncellenmiyor",
             "güncelleme yok", "güncelleme gelmiyor",
             "güncelleme yapamıyorum", "son güncelleme",
-            "güncellemeden sonra", "güncelleme geç geliyor",
-            "her hafta güncelleme"
+            "güncellemeden sonra", "güncelleme geç geliyor"
         ],
         "regex": [
             r"güncelleme.*(yok|gelmiyor|yapamıyorum|sorun|hata)",
-            r"güncellemeden sonra.*(bozuldu|açılmıyor|kasıyor|hata)",
-            r"son güncelleme.*(kötü|bozdu|hata)"
+            r"güncellemeden sonra.*(bozuldu|açılmıyor|kasıyor|hata|donuyor)",
+            r"son güncelleme.*(kötü|bozdu|hata|sorun)"
         ],
         "fuzzy": [
-            "güncelleme", "guncelleme", "güncellenmiyor"
+            "güncellenmiyor", "güncelleyemiyorum"
         ]
     },
 
     "yeni_bolum_icerik_eksikligi": {
         "keywords": [
-            "yeni bölüm", "yeni bölümler", "yeni bölüm gelmiyor",
-            "ne zaman gelecek", "devamı gelmiyor", "oyun bitti",
+            "yeni bölüm gelmiyor", "devamı gelmiyor", "oyun bitti",
             "seviye kalmadı", "bölüm kalmadı", "arena da bitti",
-            "şampiyonlar ligi", "efsane arena", "yeni seviyeler",
-            "bölümleri bitirdim", "son bölüm", "devamını bekliyorum",
-            "çok az bölüm", "seviyeleri az", "yeni macera"
+            "yeni seviyeler", "bölümleri bitirdim", "son bölüm",
+            "devamını bekliyorum", "çok az bölüm", "seviyeleri az"
         ],
         "regex": [
             r"yeni\s+(bölüm|seviye|level).*gelmiyor",
             r"(bölüm|seviye|level).*kalmadı",
             r"(oyun|bölümler|seviyeler).*bitti",
             r"devamı.*gelmiyor",
-            r"ne zaman.*gelecek"
+            r"ne zaman.*(gelecek|gelir)",
+            r"(çok az|az).*bölüm"
         ],
-        "fuzzy": [
-            "bölüm", "seviye", "level"
-        ]
+        "fuzzy": []
     },
 
     "cihaz_goruntu_sorunu": {
         "keywords": [
-            "siyah ekran", "siyah pikseller", "piksel", "görüntü bozuk",
-            "grafikleri bozuk", "yazı okunmuyor", "gözükmüyor",
-            "simsiyah karışık bir ekran", "siyah karışık ekran",
-            "telefonumda çalışmadı", "tablet", "android", "honor",
-            "kaplama", "çözünürlük", "şarj yiyor", "telefon ısınıyor",
-            "telefon kitleniyor", "cihaz", "uyumlu değil", "yüklenemez"
+            "siyah ekran", "siyah pikseller", "görüntü bozuk",
+            "grafikleri bozuk", "yazı okunmuyor", "simsiyah karışık bir ekran",
+            "siyah karışık ekran", "telefonumda çalışmadı",
+            "uyumlu değil", "yüklenemez", "telefon ısınıyor",
+            "telefon kitleniyor", "şarj yiyor"
         ],
         "regex": [
             r"siyah.*ekran",
             r"görüntü.*bozuk",
             r"grafik.*bozuk",
             r"telefon.*(ısınıyor|kitleniyor|çalışmadı)",
-            r"(cihaz|telefon|tablet).*(uyumlu değil|çalışmadı)"
+            r"(cihaz|telefon|tablet).*(uyumlu değil|çalışmadı|desteklemiyor)",
+            r"şarj.*(yiyor|bitiriyor|tüketiyor)"
         ],
         "fuzzy": [
-            "ekran", "piksel", "görüntü", "grafik", "çözünürlük"
+            "çözünürlük"
         ]
     },
 
@@ -131,8 +119,7 @@ CATEGORY_RULES = {
             "açılmadı", "oyuna giremiyorum", "giriş yapamıyorum",
             "oyuna giriş yapamıyorum", "oyun açılmıyor", "oyun açılmadı",
             "indirilmiyor", "yüklemiyor", "60 da kalıyor",
-            "100 oluyor", "hata veriyor", "teknik hata",
-            "açmaya çalıştığımda", "oyuna girmeden atıyor",
+            "hata veriyor", "teknik hata", "oyuna girmeden atıyor",
             "uygulama çalışmıyor", "uygulamayı indiremedim"
         ],
         "regex": [
@@ -152,13 +139,12 @@ CATEGORY_RULES = {
 
     "performans_donma_kasma": {
         "keywords": [
-            "kasıyor", "kasiyor", "donuyor", "dondu", "donma",
-            "takılıyor", "takiliyor", "yavaş", "yavas", "çok yavaş",
-            "geç açılıyor", "yüklenmesi uzun", "kasma oluyor",
+            "kasıyor", "donuyor", "dondu", "donma",
+            "takılıyor", "çok yavaş", "geç açılıyor",
+            "yüklenmesi uzun", "kasma oluyor",
             "scene transitions are too slow", "3 fps",
-            "bloklar oynamıyor", "blok hareket", "aşırı kasıyor",
-            "oyun çok geç açılıyor", "optimize", "ısındırıyor",
-            "şarj tüketiyor"
+            "aşırı kasıyor", "oyun çok geç açılıyor",
+            "şarj tüketiyor", "ısındırıyor"
         ],
         "regex": [
             r"(çok|aşırı|fazla)?.*kasıyor",
@@ -166,21 +152,19 @@ CATEGORY_RULES = {
             r"çok.*yavaş",
             r"geç.*açılıyor",
             r"telefon.*ısınıyor",
-            r"şarj.*(yiyor|tüketiyor)",
+            r"şarj.*(yiyor|tüketiyor|bitiriyor)",
             r"\d+\s*fps"
         ],
         "fuzzy": [
-            "kasıyor", "kasiyor", "donuyor", "takılıyor",
-            "takiliyor", "yavaş", "yavas"
+            "kasıyor", "kasiyor", "donuyor", "takılıyor", "takiliyor"
         ]
     },
 
     "crash_hata_bug": {
         "keywords": [
-            "bug", "hata", "hatalı", "hata oluşması", "bölümde hata",
-            "levelde hata", "geçmesi gereken bölümü geçmiyor",
-            "kendi kendine çıkıyor", "oyundan atıyor", "kapanıyor",
-            "çöküyor", "bozuk oyun", "dokunmatik", "algılamıyor",
+            "bug", "hatalı", "hata oluşması", "bölümde hata",
+            "levelde hata", "kendi kendine çıkıyor", "oyundan atıyor",
+            "kapanıyor", "çöküyor", "bozuk oyun", "dokunmatik algılamıyor",
             "tuş yok", "seçenek yok", "ses yok", "titreşim yok"
         ],
         "regex": [
@@ -191,155 +175,148 @@ CATEGORY_RULES = {
             r"oyun.*(çöküyor|kapanıyor)"
         ],
         "fuzzy": [
-            "hata", "bug", "çöküyor", "kapanıyor", "algılamıyor"
+            "çöküyor", "kapanıyor", "algılamıyor"
         ]
     },
 
     "zorluk_level_design": {
         "keywords": [
-            "zor", "zorlaşıyor", "zorlaştır", "geçemiyorum", "geçilmiyor",
+            "zorlaşıyor", "zorlaştır", "geçemiyorum", "geçilmiyor",
             "geçirmiyor", "ilerleyemiyorum", "takıldım", "aynı bölüm",
-            "hep aynı", "aynı leveller", "tekrar", "sıkıcı", "bıktım",
-            "imkansız", "sinir bozucu", "sinir krizi", "çok kolay",
-            "fazla kolay", "basit", "bölümler çok kolay",
-            "sorular çok kolay", "level design", "seviye", "bölüm"
+            "hep aynı", "aynı leveller", "sinir bozucu", "sinir krizi",
+            "çok kolay", "fazla kolay", "bölümler çok kolay",
+            "sorular çok kolay", "level design"
         ],
         "regex": [
-            r"(çok|fazla).*zor",
-            r"(çok|fazla).*kolay",
+            r"(çok|fazla|aşırı).*zor",
+            r"(çok|fazla|aşırı).*kolay",
             r"(aynı|hep aynı).*(bölüm|level|seviye)",
             r"(geçemiyorum|geçilmiyor|ilerleyemiyorum)",
-            r"(sıkıcı|bıktım|tekrar)",
-            r"sinir.*(bozucu|krizi)"
+            r"(sıkıcı|bıktım).*",
+            r"sinir.*(bozucu|krizi)",
+            r"(bölüm|level|seviye).*(zor|kolay|tekrar|aynı)"
         ],
         "fuzzy": [
-            "zor", "kolay", "sıkıcı", "geçemiyorum", "imkansız"
+            "geçemiyorum", "imkansız"
         ]
     },
 
     "can_hamle_hak_sure": {
         "keywords": [
-            "can", "canlar", "can hakkı", "5 can", "sınırsız can",
-            "can dolma", "bekleme süresi", "bekletmek", "hamle",
-            "hamle sayısı", "hareketler yetmiyor", "hak", "süre",
+            "can hakkı", "5 can", "sınırsız can", "can dolma",
+            "bekleme süresi", "hamle sayısı", "hareketler yetmiyor",
             "süre sınırı", "zaman çok kısa", "ek süre",
-            "15 dakika süre", "mola", "her levelde mola"
+            "15 dakika süre", "her levelde mola"
         ],
         "regex": [
-            r"can.*(dolmuyor|az|yetmiyor|bekleme)",
-            r"hamle.*(az|yetmiyor|sayısı)",
-            r"süre.*(az|kısa|yetmiyor)",
+            r"can.*(dolmuyor|az|yetmiyor|bekleme|bitti)",
+            r"hamle.*(az|yetmiyor|sayısı|bitti)",
+            r"süre.*(az|kısa|yetmiyor|bitti)",
             r"zaman.*çok kısa",
             r"hak.*(az|yetmiyor|bitti)"
         ],
-        "fuzzy": [
-            "can", "hamle", "süre", "hak"
-        ]
+        "fuzzy": []
     },
 
     "odeme_satin_alma_ekonomi": {
         "keywords": [
             "satın alma", "satın almaya", "ücretlendirme", "ücretli",
-            "para", "altın", "coin", "jeton", "iksir", "pahalı",
-            "ticarethane", "kredi kartı", "almaya zorluyor",
-            "satın almaya zorluyor", "ödeme yap", "premium",
-            "ücret ödemeden", "iade", "geri ödeme", "para iadesi"
+            "pahalı", "ticarethane", "kredi kartı",
+            "almaya zorluyor", "satın almaya zorluyor",
+            "ödeme yap", "premium", "ücret ödemeden",
+            "iade", "geri ödeme", "para iadesi"
         ],
         "regex": [
-            r"para.*(verdim|çekildi|iade|gelmedi)",
-            r"satın.*(aldım|alma|almaya)",
+            r"para.*(verdim|çekildi|iade|gelmedi|aldı)",
+            r"satın.*(aldım|alma|almaya|alın)",
             r"(ücret|ödeme|premium|kredi kartı)",
-            r"(coin|altın|jeton).*(az|gelmedi|pahalı)",
+            r"(coin|altın|jeton).*(az|gelmedi|pahalı|yetmiyor)",
             r"almaya.*zorluyor"
         ],
         "fuzzy": [
-            "para", "ödeme", "ücret", "premium", "iade", "coin", "jeton"
+            "premium", "iade"
         ]
     },
 
     "odul_bonus_ipucu": {
         "keywords": [
-            "bonus", "ödül", "hediye", "sandık", "çark", "güçlendirici",
-            "ışık top", "roket", "bomba", "envanter",
+            "bonus", "ödül", "hediye", "sandık", "çark",
+            "güçlendirici", "ışık top", "roket", "bomba",
             "kazandıklarını vermedi", "hediyeleri azalttılar",
             "ipucu", "ampul", "joker"
         ],
         "regex": [
-            r"(ödül|bonus|hediye).*(vermiyor|az|gelmedi)",
+            r"(ödül|bonus|hediye).*(vermiyor|az|gelmedi|alamadım)",
             r"(sandık|çark|joker|ipucu)",
             r"kazandıklarını.*vermedi"
         ],
         "fuzzy": [
-            "ödül", "bonus", "hediye", "joker", "ipucu"
+            "joker", "ipucu"
         ]
     },
 
     "kart_koleksiyon": {
         "keywords": [
-            "kart", "kartlar", "koleksiyon", "mor kart", "sarı kart",
-            "gümüş kart", "eksik kart", "aynı kart", "kart çıkmıyor"
+            "mor kart", "sarı kart", "gümüş kart",
+            "eksik kart", "aynı kart", "kart çıkmıyor"
         ],
         "regex": [
             r"kart.*(çıkmıyor|eksik|aynı|gelmiyor)",
             r"(mor|sarı|gümüş).*kart",
-            r"koleksiyon"
+            r"koleksiyon.*(eksik|tamamlanmıyor)"
         ],
-        "fuzzy": [
-            "kart", "koleksiyon"
-        ]
+        "fuzzy": []
     },
 
     "hile_algoritma_adalet": {
         "keywords": [
-            "hile", "algoritma", "sistem", "kasıtlı", "bilerek",
+            "hile", "algoritma", "kasıtlı", "bilerek",
             "rastgele değil", "oyun isterse", "oyun seni yönetiyor",
             "kaybettiriyor", "kurmaca", "adaletsiz", "haksızlık",
             "sahtekarlık", "izin vermiyor", "oynatmıyor",
-            "kafana göre", "oyun kurucu oynuyor", "geçme ihtimali yok",
+            "kafana göre", "geçme ihtimali yok",
             "kaybeden ben oluyorum", "puanlarım gelmiyor",
             "oyun bizimle oynuyor"
         ],
         "regex": [
-            r"(hile|algoritma|sahtekarlık|haksızlık)",
+            r"(hile|algoritma|sahtekarlık|haksızlık|adaletsiz)",
             r"oyun.*(kaybettiriyor|yönetiyor|izin vermiyor|oynatmıyor)",
             r"kafana göre",
             r"rastgele değil",
             r"bilerek.*(kaybettiriyor|vermiyor)"
         ],
         "fuzzy": [
-            "hile", "algoritma", "adaletsiz", "haksızlık", "sahtekarlık"
+            "adaletsiz", "haksızlık", "sahtekarlık"
         ]
     },
 
     "destek_iletisim": {
         "keywords": [
-            "destek", "yardım", "yardımcı olur musunuz",
-            "iletişime geçemiyorum", "cevap vermiyor",
-            "geri dönüş", "sorun bildir", "dikkate alınırsa",
-            "çözümü nedir", "düzeltebilir miyiz",
-            "müşteri temsilcisi", "ulaşamıyorum",
-            "ilgilenmiyor", "açıklama yapın"
+            "yardımcı olur musunuz", "iletişime geçemiyorum",
+            "cevap vermiyor", "geri dönüş", "sorun bildir",
+            "dikkate alınırsa", "çözümü nedir", "düzeltebilir miyiz",
+            "müşteri temsilcisi", "ulaşamıyorum", "ilgilenmiyor",
+            "açıklama yapın"
         ],
         "regex": [
-            r"(destek|yardım|müşteri temsilcisi)",
+            r"(destek|yardım|müşteri temsilcisi).*(lütfen|istiyorum|bekliyorum)?",
             r"cevap.*vermiyor",
             r"geri dönüş.*(yok|yapılmadı|vermiyor)",
             r"iletişime.*geçemiyorum",
             r"çözümü.*nedir"
         ],
         "fuzzy": [
-            "destek", "yardım", "iletişim", "ulaşamıyorum"
+            "ulaşamıyorum"
         ]
     },
 
     "sohbet_takim_arkadas_topluluk": {
         "keywords": [
             "sohbet", "mesaj", "ban", "erişim engeli", "spam engeli",
-            "takım", "grup", "lider", "arkadaş",
-            "arkadaşlarımı göremiyorum", "arkadaş listem",
-            "puanlarını göremiyoruz", "istek gönderemiyorum",
-            "konuşamıyorum", "küfür", "hakaret", "oyuncu davet",
-            "chat", "kulüp"
+            "takım", "grup", "lider", "arkadaşlarımı göremiyorum",
+            "arkadaş listem", "puanlarını göremiyoruz",
+            "istek gönderemiyorum", "konuşamıyorum", "küfür",
+            "hakaret", "oyuncu davet", "chat", "kulüp"
         ],
         "regex": [
             r"(sohbet|chat|mesaj|takım|grup|kulüp)",
@@ -347,51 +324,47 @@ CATEGORY_RULES = {
             r"(ban|erişim engeli|spam engeli)",
             r"(küfür|hakaret)"
         ],
-        "fuzzy": [
-            "sohbet", "takım", "arkadaş", "chat", "kulüp"
-        ]
+        "fuzzy": []
     },
 
     "hesap_kayit_ilerleme": {
         "keywords": [
-            "hesap", "hesabım", "facebook", "google play", "kayıt",
-            "baştan başladı", "sıfırdan", "ilerleme", "kaldığım yerden",
-            "telefonuma aktardım", "telefon değişikliği", "format",
-            "oyunu silmek istiyorum", "telefon değişti",
-            "yeniden başlattı", "levelimi geri alamadım",
-            "oyunum silindi", "profil", "avatar", "isim değiştirme",
-            "1 seviyeye düştüm", "seviye 1", "geri attı",
-            "geriye dönüyor", "sıfırlanma"
+            "hesabım", "facebook", "google play", "baştan başladı",
+            "sıfırdan", "kaldığım yerden", "telefonuma aktardım",
+            "telefon değişikliği", "format", "oyunu silmek istiyorum",
+            "telefon değişti", "yeniden başlattı",
+            "levelimi geri alamadım", "oyunum silindi",
+            "isim değiştirme", "1 seviyeye düştüm",
+            "geri attı", "geriye dönüyor", "sıfırlanma"
         ],
         "regex": [
             r"hesab.*(silindi|gitti|geri alamadım|sıfırlandı)",
             r"(baştan|sıfırdan).*başladı",
             r"level.*geri alamadım",
             r"telefon.*değişti",
-            r"(facebook|google play).*bağlan",
+            r"(facebook|google play).*(bağlan|giriş)",
             r"ilerleme.*(gitti|silindi|kayboldu)"
         ],
         "fuzzy": [
-            "hesap", "kayıt", "ilerleme", "profil", "avatar", "sıfırlandı"
+            "sıfırlandı"
         ]
     },
 
     "internet_cevrimdisi": {
         "keywords": [
-            "internet", "internetsiz", "çevrimdışı", "çevrim dışı",
-            "internet yokken", "internet kapalıyken", "internet çekse",
+            "internetsiz", "çevrimdışı", "çevrim dışı",
+            "internet yokken", "internet kapalıyken",
             "internet bağlantısız", "internet olmadan oynanmıyor",
-            "internetli", "internetsiz oynanmıyor",
-            "internetsiz oynayamıyoruz", "wifi", "online"
+            "internetsiz oynanmıyor", "internetsiz oynayamıyoruz"
         ],
         "regex": [
-            r"internet.*(yok|olmadan|kapalı|çekmiyor|istemesin)",
+            r"internet.*(yok|olmadan|kapalı|çekmiyor|istemesin|bağlantı)",
             r"internetsiz.*(oynanmıyor|oynayamıyorum)",
             r"çevrim\s*dışı",
-            r"wifi"
+            r"wifi.*(yok|bağlanmıyor|çekmiyor)"
         ],
         "fuzzy": [
-            "internet", "internetsiz", "çevrimdışı", "wifi", "online"
+            "internetsiz", "çevrimdışı"
         ]
     },
 
@@ -409,33 +382,28 @@ CATEGORY_RULES = {
             r"(rehber|kimlik|e posta).*izin",
             r"güvenli değil"
         ],
-        "fuzzy": [
-            "gizlilik", "sözleşme", "izin", "güvenlik"
-        ]
+        "fuzzy": []
     },
 
     "dil_lokalizasyon": {
         "keywords": [
-            "türkçe", "turkce", "ingilizce", "dil", "dil desteği",
             "türkçe değil", "ingilizceye geçiyor",
-            "yarı ingilizce", "çeviri", "sorular ingilizce",
-            "türkçe olmuyor"
+            "yarı ingilizce", "sorular ingilizce",
+            "türkçe olmuyor", "dil desteği"
         ],
         "regex": [
             r"türkçe.*(değil|olmuyor|yok)",
-            r"ingilizce.*(geçiyor|sorular|oluyor)",
-            r"dil.*(desteği|sorunu|yok)",
-            r"çeviri"
+            r"ingilizce.*(geçiyor|sorular|oluyor|kaldı)",
+            r"dil.*(desteği|sorunu|yok|değişmiyor)",
+            r"çeviri.*(kötü|hatalı|yok)"
         ],
-        "fuzzy": [
-            "türkçe", "turkce", "ingilizce", "çeviri"
-        ]
+        "fuzzy": []
     },
 
     "uygunsuz_icerik_yas": {
         "keywords": [
             "çocuklar için uygun değil", "küçük çocuklar",
-            "yaş sınırı", "uygunsuz", "evlilik", "cinsel",
+            "yaş sınırı", "uygunsuz", "cinsel",
             "sapık", "kötü örnek", "çocuklara kötü",
             "şiddet", "aldatma"
         ],
@@ -444,26 +412,23 @@ CATEGORY_RULES = {
             r"(yaş sınırı|uygunsuz|cinsel|şiddet|aldatma)",
             r"kötü örnek"
         ],
-        "fuzzy": [
-            "uygunsuz", "çocuk", "şiddet", "cinsel"
-        ]
+        "fuzzy": []
     },
 
     "egitici_bilissel_fayda": {
         "keywords": [
-            "beyin", "zeka", "zihin", "zihni", "eğitici",
-            "öğretici", "hafıza", "kelime haznesi",
-            "kelime öğren", "bilgi", "düşünme", "karar verme",
-            "iq", "beyin geliştirme", "akıl", "mantık", "bulmaca"
+            "beyin geliştirme", "kelime haznesi",
+            "kelime öğren", "karar verme",
+            "eğitici", "öğretici", "hafıza",
+            "zeka geliştiriyor", "zihin geliştiriyor",
+            "mantık", "bulmaca"
         ],
         "regex": [
             r"(beyin|zeka|zihin|hafıza).*geliştir",
             r"(eğitici|öğretici|bilgi|mantık|bulmaca)",
             r"kelime.*(öğren|haznesi)"
         ],
-        "fuzzy": [
-            "eğitici", "öğretici", "zeka", "hafıza", "bulmaca"
-        ]
+        "fuzzy": []
     },
 
     "olumlu_deneyim": {
@@ -475,27 +440,25 @@ CATEGORY_RULES = {
             "beğendim", "bayıldım", "kafa dağıtmak",
             "stres at", "başarılı", "on numara", "10 numara",
             "kaliteli", "zevkli", "sarıyor", "çok iyi",
-            "efsane", "müq", "mük", "nice", "good",
-            "perfect", "excellent", "iyi oyun", "güzel",
-            "iyi", "teşekkürler", "ellerinize sağlık",
-            "severek oynuyorum", "favori oyunum", "şahane"
+            "efsane", "müq", "mük", "perfect", "excellent",
+            "iyi oyun", "ellerinize sağlık", "severek oynuyorum",
+            "favori oyunum", "şahane"
         ],
         "regex": [
-            r"(çok|aşırı)?.*(güzel|iyi|harika|mükemmel|süper)",
+            r"(çok|aşırı|gayet).*(güzel|iyi|harika|mükemmel|süper)",
             r"tavsiye.*ederim",
             r"(beğendim|bayıldım|efsane|şahane)",
             r"severek.*oynuyorum",
             r"ellerinize sağlık"
         ],
         "fuzzy": [
-            "güzel", "guzel", "gzl", "iyi", "harika",
-            "mükemmel", "mukemmel", "süper", "super", "efsane"
+            "güzel", "guzel", "harika", "mükemmel", "mukemmel", "efsane"
         ]
     },
 
     "genel_negatif_deneyim": {
         "keywords": [
-            "berbat", "rezalet", "çok kötü", "kötü", "saçma",
+            "berbat", "rezalet", "çok kötü", "saçma",
             "beğenmedim", "hiç iyi değil", "boş oyun",
             "zaman kaybı", "sildim", "sileceğim", "oynamayın",
             "indirmeyin", "tavsiye etmiyorum", "nefret", "lanet",
@@ -506,15 +469,14 @@ CATEGORY_RULES = {
             "çöp", "kötü oyun"
         ],
         "regex": [
-            r"(çok|aşırı)?.*(kötü|berbat|rezalet|saçma)",
+            r"(çok|aşırı|fazla).*(kötü|berbat|rezalet|saçma)",
             r"zaman.*kaybı",
             r"(oynamayın|indirmeyin|sildim|sileceğim)",
             r"tavsiye.*etmiyorum",
             r"(çöp|gereksiz|boş oyun|bomboş)"
         ],
         "fuzzy": [
-            "kötü", "kotu", "berbat", "rezalet", "saçma",
-            "çöp", "cop", "gereksiz"
+            "berbat", "rezalet", "gereksiz"
         ]
     },
 
@@ -536,17 +498,14 @@ CATEGORY_RULES = {
             r".*olsa.*iyi olur",
             r"(geliştirilebilir|değiştirilebilir)"
         ],
-        "fuzzy": [
-            "düzeltin", "eklenmeli", "olmalı", "geliştirilebilir"
-        ]
+        "fuzzy": []
     },
 
     "spam_anlamsiz": {
         "keywords": [
             "dudndjd", "hzhhjd", "ndkdj", "full film indir",
             "ak partinin oy oranı", "staff bu arada", "usta yavuz",
-            "messi", "bayram", "hüseyin", "anne kakam",
-            "sıla ezgi", "ı ı ı", "ok borveg", "old", "ladır"
+            "messi", "anne kakam", "ı ı ı", "ok borveg"
         ],
         "regex": [
             r"^[a-zğüşöçı]{1,2}$",
