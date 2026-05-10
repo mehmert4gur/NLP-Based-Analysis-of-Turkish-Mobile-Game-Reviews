@@ -2,6 +2,7 @@ import pandas as pd
 import re
 from pathlib import Path
 from rapidfuzz import fuzz
+from tqdm import tqdm
 
 from category_rules import CATEGORY_RULES
 from sentiment_rules import analyze_sentiment
@@ -485,7 +486,8 @@ def analyze():
 
     print("Analize alınan yorum:", len(df))
 
-    results = df["clean_text"].apply(find_categories_with_details)
+    tqdm.pandas(desc="Yorumlar kategorize ediliyor")
+    results = df["clean_text"].progress_apply(find_categories_with_details)
 
     df["categories"] = results.apply(lambda x: x[0])
     df["match_details"] = results.apply(lambda x: x[1])

@@ -123,6 +123,13 @@ if __name__ == "__main__":
     excel_path = RAW_DATA_DIR / "yerel_oyun_yorumlari.xlsx"
     csv_path = RAW_DATA_DIR / "yerel_oyun_yorumlari.csv"
 
+    import re
+    ILLEGAL_CHARACTERS_RE = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
+
+    # Remove illegal characters for Excel export
+    for col in df.select_dtypes(['object', 'string']).columns:
+        df[col] = df[col].apply(lambda x: ILLEGAL_CHARACTERS_RE.sub("", str(x)) if pd.notna(x) else x)
+
     df.to_excel(excel_path, index=False)
     df.to_csv(csv_path, index=False, encoding="utf-8-sig")
 
