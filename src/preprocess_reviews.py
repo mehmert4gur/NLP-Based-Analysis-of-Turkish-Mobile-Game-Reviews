@@ -20,19 +20,43 @@ NORMALIZATION_MAP = {
     "cok": "çok",
     "coook": "çok",
     "çokkk": "çok",
+
     "kasiyo": "kasıyor",
     "kasiyor": "kasıyor",
+
     "donuyo": "donuyor",
     "donuyorrr": "donuyor",
+
     "acilmiyor": "açılmıyor",
     "açilmiyor": "açılmıyor",
+
     "reklm": "reklam",
     "reklem": "reklam",
     "reklamm": "reklam",
+
     "tanitim": "tanıtım",
+
     "internetli": "internet",
+
     "offline": "çevrimdışı",
     "online": "çevrimiçi",
+
+    # yeni eklenenler
+    "zorlastirilmis": "zorlaştırılmış",
+    "zorlasti": "zorlaştı",
+    "sacma": "saçma",
+
+    "silecegim": "sileceğim",
+    "silecem": "sileceğim",
+
+    "haketmiyorsunuz": "hak etmiyorsunuz",
+
+    "oynatmiyorlar": "oynatmıyorlar",
+
+    "gosterdikleri": "gösterdikleri",
+    "gorsel": "görsel",
+
+    "kumara": "kumar",
 }
 
 
@@ -40,7 +64,8 @@ TURKISH_HINT_WORDS = {
     "bir", "çok", "oyun", "güzel", "kötü", "reklam", "para",
     "level", "bölüm", "açılmıyor", "kasıyor", "donuyor", "harika",
     "berbat", "süper", "mükemmel", "neden", "ama", "değil",
-    "var", "yok", "hep", "çok", "az", "zor", "kolay"
+    "var", "yok", "hep", "çok", "az", "zor", "kolay",
+    "hile", "hileli", "kumar", "saçma"
 }
 
 
@@ -48,17 +73,12 @@ SHORT_MEANINGFUL_WORDS = {
     "güzel", "harika", "mükemmel", "süper", "iyi",
     "kötü", "berbat", "rezalet", "reklam",
     "kasıyor", "donuyor", "açılmıyor", "zor", "kolay",
-    "sıkıcı", "bug", "hata"
+    "sıkıcı", "bug", "hata", "hile", "hileli",
+    "saçma", "kumar"
 }
 
 
 def reduce_repeated_chars(text: str) -> str:
-    """
-    çoookkk -> çook
-    reklammmmm -> reklamm
-
-    Tamamen tek harfe indirmiyoruz çünkü Türkçede bazı çift harfler anlamlı olabilir.
-    """
     return re.sub(r"(.)\1{2,}", r"\1\1", text)
 
 
@@ -79,22 +99,16 @@ def clean_text(text):
 
     text = str(text).lower()
 
-    # URL temizliği
     text = re.sub(r"http\S+|www\.\S+", " ", text)
 
-    # Mention, hashtag sembollerini ayır ama kelimeyi koru
     text = re.sub(r"[@#]", " ", text)
 
-    # Noktalama ve emojileri boşluğa çevir
     text = re.sub(r"[^a-zA-ZğüşöçıİĞÜŞÖÇ0-9\s]", " ", text)
 
-    # Fazla boşlukları temizle
     text = re.sub(r"\s+", " ", text).strip()
 
-    # Harf tekrarlarını azalt
     text = reduce_repeated_chars(text)
 
-    # Yaygın typo/kısaltma normalize et
     text = normalize_tokens(text)
 
     return text
@@ -109,13 +123,10 @@ def is_probably_turkish(text: str) -> bool:
     if not tokens:
         return False
 
-    # Türkçe karakter varlığı güçlü sinyal
     has_turkish_char = bool(re.search(r"[ğüşöçıİĞÜŞÖÇ]", text))
 
-    # Bilinen Türkçe / oyun yorumu kelimeleri
     hint_count = sum(1 for token in tokens if token in TURKISH_HINT_WORDS)
 
-    # Çok kısa yorumlarda daha esnek davran
     if len(tokens) <= 2:
         return has_turkish_char or hint_count >= 1
 
@@ -167,7 +178,11 @@ def preprocess():
     )
 
     if "review_created_at" in df.columns:
-        df["review_created_at"] = pd.to_datetime(df["review_created_at"], errors="coerce")
+        df["review_created_at"] = pd.to_datetime(
+            df["review_created_at"],
+            errors="coerce"
+        )
+
         df["year"] = df["review_created_at"].dt.year
         df["month"] = df["review_created_at"].dt.month
 

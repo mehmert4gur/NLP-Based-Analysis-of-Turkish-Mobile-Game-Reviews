@@ -6,7 +6,7 @@ POSITIVE_TERMS = {
     "bayıldım", "sevdim", "seviyorum", "öneririm", "rahatlatıcı",
     "sarıyor", "favori", "favorim", "hoş", "muhteşem", "müq", "mük",
     "excellent", "perfect", "bravo", "teşekkür", "sağlık", "akıcı",
-    "sorunsuz"
+    "sorunsuz", "bedava", "ücretsiz"
 }
 
 NEGATIVE_TERMS = {
@@ -15,13 +15,14 @@ NEGATIVE_TERMS = {
     "lanet", "sildim", "sileceğim", "silicem", "kaldırıyorum", "indirmeyin",
     "oynamayın", "yüklemeyin", "donuyor", "kasıyor", "açılmıyor",
     "kapanıyor", "çöküyor", "hata", "bug", "bozuk", "bozuldu", "zor",
-    "zorlaştı", "zorlaştırıyor", "pahalı", "tuzağı", "hile",
-    "adaletsiz", "haksızlık", "vermiyor", "gelmiyor", "azaldı",
-    "azalttı", "azaltıyor", "düşürdü", "düşürüyor", "yetmiyor",
-    "kandırmaca", "aldatıcı", "yalan", "alakasız", "uygunsuz", "işkence",
-    "eziyet", "mahvoldu", "rezilleşti", "soğudum", "soğuttunuz",
-    "oynanmıyor", "geçilmiyor", "geçemiyorum", "ilerlenmiyor",
-    "kilitli", "kısıtlı", "kısıtlıyor", "boşa", "kaybı"
+    "zorlaştı", "zorlaştırıyor", "zorlaştırılmış", "pahalı", "tuzağı",
+    "hile", "hileli", "adaletsiz", "haksızlık", "vermiyor", "vermedi",
+    "gelmiyor", "azaldı", "azalttı", "azaltıyor", "düşürdü", "düşürüyor",
+    "yetmiyor", "kandırmaca", "aldatıcı", "yalan", "alakasız", "uygunsuz",
+    "işkence", "eziyet", "mahvoldu", "rezilleşti", "soğudum", "soğuttunuz",
+    "oynanmıyor", "oynatmıyor", "oynatmıyorlar", "geçilmiyor", "geçemiyorum",
+    "ilerlenmiyor", "kilitli", "kısıtlı", "kısıtlıyor", "boşa", "kaybı",
+    "kabus", "adilik", "kumar", "kumara", "hak", "etmiyorsunuz"
 }
 
 NEGATION_TERMS = {
@@ -49,7 +50,12 @@ POSITIVE_PHRASES = {
     "ellerinize sağlık",
     "emeğinize sağlık",
     "sorunsuz çalışıyor",
-    "akıcı çalışıyor"
+    "akıcı çalışıyor",
+    "reklam yok",
+    "reklamsız",
+    "para istemiyor",
+    "ücretsiz oyun",
+    "bedava oyun"
 }
 
 NEGATIVE_PHRASES = {
@@ -79,8 +85,16 @@ NEGATIVE_PHRASES = {
     "aşırı zor",
     "ödüller azaldı",
     "kart vermiyor",
+    "kart vermedi",
     "reklamdaki gibi değil",
-    "reklamla alakası yok"
+    "reklamla alakası yok",
+    "görselle oyunun alakası yok",
+    "kumara döndü",
+    "kumar gibi",
+    "hileli oyun",
+    "oyun hileli",
+    "oynatmıyorlar",
+    "hak etmiyorsunuz"
 }
 
 NEGATIVE_DEFAULT_CATEGORIES = {
@@ -167,7 +181,17 @@ CATEGORY_NEGATIVE_PATTERNS = {
         "sürekli reklam",
         "reklamdan oynanmıyor",
         "reklam yüzünden",
-        "reklam izletiyor"
+        "reklam izletiyor",
+        "reklamından kurtulsam",
+        "reklamdan kurtulsam"
+    ],
+    "yaniltici_reklam_tanitim": [
+        "reklamdaki gibi değil",
+        "reklamla alakası yok",
+        "reklamdaki oyun yok",
+        "görselle oyunun alakası yok",
+        "görsel ile oyunun alakası yok",
+        "reklamlarda gösterdikleri oyunları oynatmıyorlar"
     ],
     "odeme_satin_alma_ekonomi": [
         "para tuzağı",
@@ -177,7 +201,9 @@ CATEGORY_NEGATIVE_PATTERNS = {
         "parasız ilerlenmiyor",
         "pahalı",
         "satın almaya zorluyor",
-        "altın almaya zorluyor"
+        "altın almaya zorluyor",
+        "kumara döndü",
+        "kumar gibi"
     ],
     "zorluk_level_design": [
         "çok zor",
@@ -185,20 +211,25 @@ CATEGORY_NEGATIVE_PATTERNS = {
         "geçemiyorum",
         "geçilmiyor",
         "zorlaştırıyor",
+        "zorlaştırılmış",
         "zorlaştı",
         "sıkıcı",
-        "stres"
+        "stres",
+        "günlerce sürüyor",
+        "günlerce geçemiyorum"
     ],
     "odul_bonus_ipucu": [
         "ödül az",
         "ödüller azaldı",
         "hediye gelmiyor",
         "kart vermiyor",
+        "kart vermedi",
         "altın az",
         "puan az"
     ],
     "kart_koleksiyon": [
         "kart vermiyor",
+        "kart vermedi",
         "kart gelmiyor",
         "kart çıkmıyor",
         "aynı kart",
@@ -206,6 +237,7 @@ CATEGORY_NEGATIVE_PATTERNS = {
     ],
     "hile_algoritma_adalet": [
         "hile",
+        "hileli",
         "algoritma",
         "adaletsiz",
         "sistem engelliyor",
@@ -224,7 +256,7 @@ def tokenize(text):
 
 def token_matches(token, term):
     """
-    Sentiment tarafında ters prefix YOK.
+    Sentiment tarafında ters prefix yok.
 
     Doğru:
     güzel -> güzeldi
