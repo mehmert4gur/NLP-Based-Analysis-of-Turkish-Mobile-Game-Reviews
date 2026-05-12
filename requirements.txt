@@ -5,3 +5,4 @@ tqdm
 google-play-scraper
 pytest
 matplotlib
+streamlit
