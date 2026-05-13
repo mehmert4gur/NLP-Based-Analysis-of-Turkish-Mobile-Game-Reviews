@@ -1,4 +1,7 @@
 import streamlit as st
+import pandas as pd
+from pathlib import Path
+import ast
 
 from hybrid_inference import load_model, analyze_review_for_ui
 
@@ -103,6 +106,20 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 @st.cache_resource(show_spinner="Model yükleniyor...")
 def cached_model():
     return load_model()
+
+
+@st.cache_data(show_spinner="Veri seti yükleniyor...")
+def load_dataset():
+    dataset_path = Path("data/processed/kategori_analizi.xlsx")
+    if not dataset_path.exists():
+        return pd.DataFrame()
+    
+    try:
+        df = pd.read_excel(dataset_path)
+        return df
+    except Exception as e:
+        st.error(f"Veri yüklenirken hata oluştu: {e}")
+        return pd.DataFrame()
 
 
 def badge(label, kind="neutral"):
@@ -376,184 +393,285 @@ def render_uncertain_predictions(result):
             st.caption(item["reason"])
 
 
-st.markdown(
-    """
-    <div class="hero">
-        <h1>🎮 Türkçe Mobil Oyun Yorumu Analizi</h1>
-        <p>
-            Hybrid BERTürk + Rule-Based ABSA sistemiyle yorumlardan kategori,
-            sentiment, güven skoru, açıklama ve ürün aksiyonu çıkarımı.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-
+# --- MOD SEÇİMİ ---
 with st.sidebar:
-    st.header("Model Paneli")
-    st.write("**Model:** BERTürk Multi-label ABSA")
-    st.write("**Yaklaşım:** Hybrid")
-    st.write("**Girdi:** Türkçe oyun yorumu")
-    st.write("**Çıktı:** Kategori + sentiment + explainability")
-
-    st.divider()
-
-    rating = st.selectbox(
-        "Yıldız puanı",
-        ["Yok", 1, 2, 3, 4, 5],
-        index=0,
-        help="Opsiyonel. Girilirse rating-text contradiction kontrolü yapılır.",
+    st.header("Uygulama Modu")
+    app_mode = st.radio(
+        "Görünüm Seçiniz:",
+        ["Tekil Yorum Analizi (Yapay Zeka)", "Oyun Veri Seti İnceleme"]
     )
-
-    rating_value = None if rating == "Yok" else rating
-
     st.divider()
 
-    st.write("### Eşik Açıklaması")
-    st.caption("0.60+ → yüksek güven")
-    st.caption("0.45–0.60 → orta güven")
-    st.caption("0.35–0.45 → düşük güven")
-    st.caption("0.25–0.35 → kararsız / dikkat çekici")
 
-
-tokenizer, model, device = cached_model()
-
-
-example_texts = [
-    "oyun güzel ama çok reklam var ve sürekli kasıyor",
-    "reklamdaki oyunla alakası yok bambaşka bir şey çıkıyor",
-    "oyun açılmıyor sürekli hata veriyor",
-    "bölümler çok zor hamle yetmiyor",
-    "kart vermiyor hep aynı kart çıkıyor",
-    "çok güzel eğlenceli bir oyun herkese tavsiye ederim",
-    "5 yıldız verdim yorumum üstte gözüksün ama oyun çok kötü",
-]
-
-
-st.subheader("Yorum Girişi")
-
-selected_example = st.selectbox(
-    "Örnek yorum seç",
-    ["Kendi yorumumu yazacağım"] + example_texts,
-)
-
-default_text = "" if selected_example == "Kendi yorumumu yazacağım" else selected_example
-
-text = st.text_area(
-    "Analiz edilecek yorum",
-    value=default_text,
-    height=150,
-    placeholder="Buraya bir oyun yorumu yaz...",
-)
-
-col_button, col_clear = st.columns([1, 5])
-
-with col_button:
-    analyze_button = st.button("Analiz Et", type="primary", use_container_width=True)
-
-with col_clear:
-    st.caption("Metin girildikten sonra model kategori, sentiment ve ürün aksiyonu üretecek.")
-
-
-if analyze_button:
-    if not text.strip():
-        st.warning("Lütfen analiz edilecek bir yorum gir.")
-        st.stop()
-
-    with st.spinner("Yorum analiz ediliyor..."):
-        result = analyze_review_for_ui(
-            text=text,
-            rating=rating_value,
-            tokenizer=tokenizer,
-            model=model,
-            device=device,
-        )
-
-    if not result.get("success"):
-        st.error(result.get("error", "Analiz sırasında hata oluştu."))
-        st.stop()
-
-    st.divider()
-
-    sentiment = result["sentiment"]["general_sentiment"]
-
-    st.subheader("Özet Dashboard")
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.metric("Final kategori", result["statistics"]["final_category_count"])
-
-    with col2:
-        st.metric("Rule kategori", result["statistics"]["rule_category_count"])
-
-    with col3:
-        st.metric("BERT eşik üstü", result["statistics"]["bert_threshold_category_count"])
-
-    with col4:
-        st.metric("Rule-BERT uyumu", result["statistics"]["agreement"]["score"])
+if app_mode == "Tekil Yorum Analizi (Yapay Zeka)":
 
     st.markdown(
-        badge(f"Genel sentiment: {sentiment}", sentiment_kind(sentiment))
-        + badge(f"Sentiment skoru: {result['sentiment']['sentiment_score']}", "neutral"),
+        """
+        <div class="hero">
+            <h1>🎮 Türkçe Mobil Oyun Yorumu Analizi</h1>
+            <p>
+                Hybrid BERTürk + Rule-Based ABSA sistemiyle yorumlardan kategori,
+                sentiment, güven skoru, açıklama ve ürün aksiyonu çıkarımı.
+            </p>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 
-    st.write("")
 
-    left, right = st.columns([1.4, 1])
+    with st.sidebar:
+        st.header("Model Paneli")
+        st.write("**Model:** BERTürk Multi-label ABSA")
+        st.write("**Yaklaşım:** Hybrid")
+        st.write("**Girdi:** Türkçe oyun yorumu")
+        st.write("**Çıktı:** Kategori + sentiment + explainability")
 
-    with left:
-        st.subheader("Final Hybrid Kategoriler")
+        st.divider()
 
-        final_categories = result["categories"]["final_categories"]
+        rating = st.selectbox(
+            "Yıldız puanı",
+            ["Yok", 1, 2, 3, 4, 5],
+            index=0,
+            help="Opsiyonel. Girilirse rating-text contradiction kontrolü yapılır.",
+        )
 
-        if not final_categories:
-            st.info("Kategori bulunamadı.")
-        else:
-            for item in final_categories:
-                render_category_card(item, result)
+        rating_value = None if rating == "Yok" else rating
 
-    with right:
-        render_main_issue(result)
+        st.divider()
 
-        st.write("")
-        st.subheader("Uyarılar")
-        render_warning_box(result["warnings"])
+        st.write("### Eşik Açıklaması")
+        st.caption("0.60+ → yüksek güven")
+        st.caption("0.45–0.60 → orta güven")
+        st.caption("0.35–0.45 → düşük güven")
+        st.caption("0.25–0.35 → kararsız / dikkat çekici")
 
-    st.divider()
 
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
-        [
-            "BERTürk Tahminleri",
-            "Karar Akışı",
-            "Açıklamalar",
-            "Sentiment",
-            "Rule vs BERTürk",
-            "Kararsız Tahminler",
-            "Debug JSON",
-        ]
+    tokenizer, model, device = cached_model()
+
+
+    example_texts = [
+        "oyun güzel ama çok reklam var ve sürekli kasıyor",
+        "reklamdaki oyunla alakası yok bambaşka bir şey çıkıyor",
+        "oyun açılmıyor sürekli hata veriyor",
+        "bölümler çok zor hamle yetmiyor",
+        "kart vermiyor hep aynı kart çıkıyor",
+        "çok güzel eğlenceli bir oyun herkese tavsiye ederim",
+        "5 yıldız verdim yorumum üstte gözüksün ama oyun çok kötü",
+    ]
+
+
+    st.subheader("Yorum Girişi")
+
+    selected_example = st.selectbox(
+        "Örnek yorum seç",
+        ["Kendi yorumumu yazacağım"] + example_texts,
     )
 
-    with tab1:
-        render_bert_predictions(result)
+    default_text = "" if selected_example == "Kendi yorumumu yazacağım" else selected_example
 
-    with tab2:
-        render_decision_flow(result)
+    text = st.text_area(
+        "Analiz edilecek yorum",
+        value=default_text,
+        height=150,
+        placeholder="Buraya bir oyun yorumu yaz...",
+    )
 
-    with tab3:
-        render_explanations(result)
+    col_button, col_clear = st.columns([1, 5])
 
-    with tab4:
-        render_sentiment_details(result)
+    with col_button:
+        analyze_button = st.button("Analiz Et", type="primary", use_container_width=True)
 
-    with tab5:
-        render_model_comparison(result)
+    with col_clear:
+        st.caption("Metin girildikten sonra model kategori, sentiment ve ürün aksiyonu üretecek.")
 
-    with tab6:
-        render_uncertain_predictions(result)
 
-    with tab7:
-        with st.expander("Ham JSON çıktısını göster", expanded=False):
-            st.json(result)
+    if analyze_button:
+        if not text.strip():
+            st.warning("Lütfen analiz edilecek bir yorum gir.")
+            st.stop()
+
+        with st.spinner("Yorum analiz ediliyor..."):
+            result = analyze_review_for_ui(
+                text=text,
+                rating=rating_value,
+                tokenizer=tokenizer,
+                model=model,
+                device=device,
+            )
+
+        if not result.get("success"):
+            st.error(result.get("error", "Analiz sırasında hata oluştu."))
+            st.stop()
+
+        st.divider()
+
+        sentiment = result["sentiment"]["general_sentiment"]
+
+        st.subheader("Özet Dashboard")
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric("Final kategori", result["statistics"]["final_category_count"])
+
+        with col2:
+            st.metric("Rule kategori", result["statistics"]["rule_category_count"])
+
+        with col3:
+            st.metric("BERT eşik üstü", result["statistics"]["bert_threshold_category_count"])
+
+        with col4:
+            st.metric("Rule-BERT uyumu", result["statistics"]["agreement"]["score"])
+
+        st.markdown(
+            badge(f"Genel sentiment: {sentiment}", sentiment_kind(sentiment))
+            + badge(f"Sentiment skoru: {result['sentiment']['sentiment_score']}", "neutral"),
+            unsafe_allow_html=True,
+        )
+
+        st.write("")
+
+        left, right = st.columns([1.4, 1])
+
+        with left:
+            st.subheader("Final Hybrid Kategoriler")
+
+            final_categories = result["categories"]["final_categories"]
+
+            if not final_categories:
+                st.info("Kategori bulunamadı.")
+            else:
+                for item in final_categories:
+                    render_category_card(item, result)
+
+        with right:
+            render_main_issue(result)
+
+            st.write("")
+            st.subheader("Uyarılar")
+            render_warning_box(result["warnings"])
+
+        st.divider()
+
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
+            [
+                "BERTürk Tahminleri",
+                "Karar Akışı",
+                "Açıklamalar",
+                "Sentiment",
+                "Rule vs BERTürk",
+                "Kararsız Tahminler",
+                "Debug JSON",
+            ]
+        )
+
+        with tab1:
+            render_bert_predictions(result)
+
+        with tab2:
+            render_decision_flow(result)
+
+        with tab3:
+            render_explanations(result)
+
+        with tab4:
+            render_sentiment_details(result)
+
+        with tab5:
+            render_model_comparison(result)
+
+        with tab6:
+            render_uncertain_predictions(result)
+
+        with tab7:
+            with st.expander("Ham JSON çıktısını göster", expanded=False):
+                st.json(result)
+
+elif app_mode == "Oyun Veri Seti İnceleme":
+    
+    st.markdown(
+        """
+        <div class="hero">
+            <h1>📊 Oyun Veri Seti Analizi (Dashboard)</h1>
+            <p>
+                Analiz edilmiş tüm mobil oyun yorumlarının özetleri, filtrelemeleri ve kategori dağılımları.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    
+    df = load_dataset()
+    
+    if df.empty:
+        st.warning("Veri seti bulunamadı. Lütfen 'data/processed/kategori_analizi.xlsx' dosyasının var olduğundan emin olun.")
+    else:
+        # Metrikler
+        total_reviews = len(df)
+        total_games = df['game_name'].nunique() if 'game_name' in df.columns else 0
+        analyzable = df['is_analyzable'].sum() if 'is_analyzable' in df.columns else total_reviews
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Toplam Yorum", f"{total_reviews:,}")
+        with col2:
+            st.metric("Oyun Sayısı", f"{total_games:,}")
+        with col3:
+            st.metric("Analiz Edilen Yorum", f"{analyzable:,}")
+            
+        st.divider()
+        
+        # Filtreleme
+        st.subheader("Filtreleme Seçenekleri")
+        
+        if 'game_name' in df.columns:
+            games = ["Tümü"] + sorted(df['game_name'].dropna().unique().tolist())
+            selected_game = st.selectbox("Oyun Filtresi", games)
+            filtered_df = df if selected_game == "Tümü" else df[df['game_name'] == selected_game]
+        else:
+            filtered_df = df
+            st.info("Veri setinde oyun ismi sütunu bulunamadı.")
+            
+        # Kategori grafiği
+        st.subheader("Kategori Şikayet Dağılımı")
+        
+        if 'categories' in filtered_df.columns:
+            cat_series = filtered_df['categories'].dropna()
+            
+            all_cats = []
+            for cats in cat_series:
+                if isinstance(cats, str):
+                    if cats.startswith('[') and cats.endswith(']'):
+                        try:
+                            parsed_cats = ast.literal_eval(cats)
+                            if isinstance(parsed_cats, list):
+                                all_cats.extend(parsed_cats)
+                        except:
+                            pass
+                    else:
+                        parsed_cats = [c.strip() for c in cats.split(',') if c.strip()]
+                        all_cats.extend(parsed_cats)
+                elif isinstance(cats, list):
+                    all_cats.extend(cats)
+            
+            if all_cats:
+                cat_counts = pd.Series(all_cats).value_counts().head(15)
+                st.bar_chart(cat_counts)
+            else:
+                st.info("Bu görünümde kategori bulunamadı.")
+        else:
+            st.info("Kategori dağılımı gösterilemiyor. 'categories' kolonu eksik.")
+                
+        # Tablo
+        st.subheader("Detaylı Yorum Verisi")
+        display_cols = ['game_name', 'rating', 'content', 'categories', 'general_sentiment', 'review_created_at']
+        available_cols = [c for c in display_cols if c in filtered_df.columns]
+        
+        if not available_cols:
+            available_cols = filtered_df.columns.tolist()
+        
+        st.dataframe(
+            filtered_df[available_cols],
+            use_container_width=True,
+            height=400,
+        )
