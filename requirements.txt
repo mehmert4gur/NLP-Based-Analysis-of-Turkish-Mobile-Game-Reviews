@@ -1,8 +1,15 @@
 pandas
+numpy
 openpyxl
 rapidfuzz
 tqdm
 google-play-scraper
-pytest
+torch
+transformers
+datasets
+scikit-learn
+accelerate
+safetensors
 matplotlib
 streamlit
+pytest

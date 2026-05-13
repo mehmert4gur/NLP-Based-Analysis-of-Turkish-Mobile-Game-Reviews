@@ -29,7 +29,8 @@ The system combines:
 * regex and proximity rules
 * local aspect sentiment extraction
 * weakly supervised dataset generation
-* BERTürk fine-tuning infrastructure
+* BERTürk fine-tuning with **class-weighted loss** and **dynamic threshold optimization**
+* Streamlit-based interactive analysis UI
 
 to create a scalable and explainable Turkish review analysis system.
 
@@ -61,8 +62,10 @@ The current system can:
 ✅ Detect rating-text contradictions
 ✅ Generate explainable analysis outputs
 ✅ Build weakly supervised training datasets
-✅ Run pilot BERTürk multi-label training
-✅ Generate hybrid inference infrastructure
+✅ Train BERTürk multi-label classifier with **CustomTrainer (weighted BCE loss)**
+✅ Optimize per-class decision thresholds automatically on validation set
+✅ Generate hybrid inference with explainability
+✅ Interactive Streamlit UI with **single review analysis** and **dataset dashboard**
 
 ---
 
@@ -112,11 +115,13 @@ Local Aspect Sentiment Extraction
         ↓
 Weakly Supervised Dataset Generation
         ↓
-BERTürk Fine-Tuning
+BERTürk Fine-Tuning (CustomTrainer + Class Weights + Dynamic Thresholds)
         ↓
 Evaluation & Error Analysis
         ↓
 Hybrid Rule + Transformer Inference
+        ↓
+Streamlit Interactive UI (Single Analysis + Dataset Dashboard)
 ```
 
 ---
@@ -171,7 +176,9 @@ scikit-learn \
 transformers \
 datasets \
 torch \
-accelerate
+accelerate \
+safetensors \
+streamlit
 ```
 
 ---
@@ -181,28 +188,29 @@ accelerate
 ```text
 src/
 │
-├── get_reviews.py
-├── preprocess_reviews.py
-├── analyze_categories.py
-├── aspect_sentiment.py
-├── category_rules.py
-├── sentiment_rules.py
+├── get_reviews.py                          # Google Play review scraper
+├── preprocess_reviews.py                   # Text normalization & cleaning
+├── analyze_categories.py                   # Rule-based category detection
+├── aspect_sentiment.py                     # Local aspect sentiment extraction
+├── category_rules.py                       # Category rule definitions
+├── sentiment_rules.py                      # Sentiment rule definitions
 │
-├── prepare_training_data.py
-├── analyze_label_distribution.py
+├── prepare_training_data.py                # Weakly supervised dataset generation
+├── analyze_label_distribution.py           # Label distribution analysis
 │
-├── train_multilabel_berturk.py
-├── train_multilabel_berturk_full.py
-├── predict_multilabel_berturk.py
+├── train_multilabel_berturk.py             # Pilot training (debugging)
+├── train_multilabel_berturk_full.py        # Full training (CustomTrainer + dynamic thresholds)
+├── predict_multilabel_berturk.py           # Standalone prediction
 │
-├── evaluate_multilabel_berturk.py
-├── error_analysis_multilabel_berturk.py
-├── compare_rule_vs_berturk.py
+├── evaluate_multilabel_berturk.py          # Model evaluation
+├── error_analysis_multilabel_berturk.py    # FP/FN error analysis
+├── compare_rule_vs_berturk.py              # Rule vs BERT comparison
 │
-├── hybrid_inference.py
-├── visualize_results.py
+├── hybrid_inference.py                     # Hybrid inference engine
+├── app.py                                  # Streamlit UI (single analysis + dataset dashboard)
+├── visualize_results.py                    # Chart/figure generation
 │
-└── local_games.py
+└── local_games.py                          # Local game definitions
 ```
 
 ---
@@ -355,18 +363,58 @@ Purpose:
 
 ---
 
-## Full Training
+## Full Training (with Performance Optimizations)
 
-Full BERTürk fine-tuning on the generated dataset.
+Full BERTürk fine-tuning with **class imbalance handling** and **dynamic threshold optimization**.
 
 ```bash
 python src/train_multilabel_berturk_full.py
 ```
 
-Outputs:
+### Key Features
+
+**CustomTrainer with Class Weights:**
+
+The training script uses a custom `Trainer` subclass that overrides `compute_loss` to apply `BCEWithLogitsLoss` with per-class `pos_weight`. This gives the model a higher penalty for misclassifying minority classes, directly addressing the class imbalance problem.
+
+* `pos_weight` is calculated from training set label frequencies
+* Extreme weights are clamped at `max=10.0` to prevent instability
+
+**Dynamic Threshold Optimization:**
+
+Instead of using a single global threshold (e.g. 0.35) for all classes, the system searches the optimal threshold for each class individually on the validation set:
+
+* Search range: 0.10 – 0.90 (step 0.05)
+* Objective: maximize per-class F1 score
+* Result: class-specific thresholds saved to `class_thresholds.json`
+* Test evaluation uses **only** validation-tuned thresholds (no data leakage)
+
+**Training Stabilization:**
+
+* `warmup_ratio=0.1` is used to prevent aggressive early weight updates
+* Best model is selected based on `macro_f1` on the validation set
+
+### Per-Class Logging
+
+After each evaluation epoch, a detailed per-class report is printed:
+
+```text
+Kategori                       | Thresh | F1     | Prec   | Rec    | Support
+-------------------------------+--------+--------+--------+--------+--------
+reklam                         | 0.40   | 0.9012 | 0.8834 | 0.9198 | 1200
+gizlilik_guvenlik_izin       * | 0.20   | 0.4500 | 0.5000 | 0.4091 | 16
+```
+
+Categories with support < 50 are marked with `*` for quick identification.
+
+### Outputs
 
 ```text
 outputs/models/berturk_multilabel_absa_full/
+├── best_model/             # Saved model weights & tokenizer
+├── class_thresholds.json   # Per-class optimized thresholds
+├── val_metrics.json        # Validation set metrics
+└── test_metrics.json       # Test set metrics
 ```
 
 ---
@@ -458,6 +506,47 @@ Hybrid → final explainable inference
 
 ---
 
+# 🖥️ Interactive Streamlit UI
+
+The project includes a Streamlit-based web interface with **two modes**:
+
+```bash
+streamlit run src/app.py
+```
+
+## Mode 1: Single Review Analysis (Yapay Zeka)
+
+Analyze a single Turkish game review in real-time using the Hybrid BERTürk + Rule-Based engine.
+
+Features:
+
+* text input or example review selection
+* optional star rating input for contradiction detection
+* final hybrid categories with confidence levels
+* aspect sentiment and local aspect sentiment badges
+* main product insight with severity, team assignment and suggested action
+* BERTürk top predictions with probability bars
+* hybrid decision flow visualization
+* explainability panel with rule evidence
+* sentiment detail breakdown
+* rule vs BERTürk comparison
+* uncertain prediction alerts
+* full JSON debug output
+
+## Mode 2: Dataset Dashboard (Oyun Veri Seti İnceleme)
+
+Explore and filter the full analyzed dataset interactively.
+
+Features:
+
+* key metrics: total reviews, game count, analyzable reviews
+* game-based filtering (selectbox)
+* category complaint distribution bar chart (top 15)
+* interactive searchable and sortable data table with columns:
+  * game name, rating, review text, categories, sentiment, date
+
+---
+
 # 📈 Current Dataset Statistics
 
 Current processed dataset:
@@ -480,7 +569,7 @@ olumlu_deneyim → 10K+
 gizlilik_guvenlik_izin → 16
 ```
 
-This is currently one of the biggest research challenges in the project.
+This is addressed by the **CustomTrainer with pos_weight** and **dynamic threshold optimization** in the training pipeline.
 
 ---
 
@@ -495,19 +584,9 @@ This is currently one of the biggest research challenges in the project.
 ✅ Aspect sentiment extraction
 ✅ Dataset generation
 ✅ Pilot BERTürk training
-✅ Pilot prediction pipeline
-
----
-
-## Written but Not Fully Tested Yet
-
-⚠️ Full BERTürk training
-⚠️ Full evaluation pipeline
-⚠️ Error analysis pipeline
-⚠️ Rule vs BERT comparison
-⚠️ Hybrid inference system
-
-These components are prepared but require stronger hardware and full-scale training.
+✅ Full BERTürk training with CustomTrainer
+✅ Hybrid inference system
+✅ Streamlit UI (single analysis + dataset dashboard)
 
 ---
 
@@ -524,11 +603,15 @@ olumlu_deneyim → 10533
 gizlilik_guvenlik_izin → 16
 ```
 
-Potential solutions:
+Implemented solutions:
 
-* weighted loss
-* oversampling
-* threshold tuning
+* ✅ weighted loss (BCEWithLogitsLoss with pos_weight)
+* ✅ per-class threshold tuning
+* ✅ warmup ratio for training stabilization
+
+Potential future improvements:
+
+* oversampling / data augmentation
 * manual annotation
 * active learning
 
@@ -563,9 +646,9 @@ Recommended:
 
 # 🔮 Future Roadmap
 
-## Phase 1 — Full BERTürk ABSA Training
+## Phase 1 — ✅ Full BERTürk ABSA Training (Completed)
 
-Train full multi-label category classifier.
+Train full multi-label category classifier with class-weighted loss and dynamic thresholds.
 
 ---
 
@@ -580,7 +663,7 @@ Analyze:
 
 ---
 
-## Phase 3 — Hybrid Rule + BERT System
+## Phase 3 — ✅ Hybrid Rule + BERT System (Completed)
 
 Combine deterministic precision with semantic learning.
 
